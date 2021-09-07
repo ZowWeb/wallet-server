@@ -19,6 +19,7 @@ router.get('/test', (req, res) =>
 // @access Public
 router.post('/setup', async (req, res) => {
   let { balance = 0, name } = req.body
+  console.log(`router.post ~ balance, name`, balance, name)
   const walletId = uuid()
 
   try {
@@ -112,7 +113,8 @@ router.post('/transact/:walletId', async (req, res) => {
     if (type === 'DEBIT' && wallet.balance < amount) {
       return res.status(400).json({ error: 'Wallet doesn\'t have enough funds' })
     }
-    const balance = type === 'DEBIT' ? wallet.balance - amount : wallet.balance + amount
+    let balance = type === 'DEBIT' ? wallet.balance - amount : wallet.balance + amount
+    balance = parseFloat(balance).toFixed(4)
     const transaction = await new Transaction({
       walletId,
       type,
