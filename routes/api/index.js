@@ -19,7 +19,6 @@ router.get('/test', (req, res) =>
 // @access Public
 router.post('/setup', async (req, res) => {
   let { balance = 0, name } = req.body
-  console.log(`router.post ~ balance, name`, balance, name)
   const walletId = uuid()
 
   try {
