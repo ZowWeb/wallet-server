@@ -16,7 +16,15 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 // Use Routes
-app.use('/api', api)
+if (process.env.NODE_ENV === 'development') {
+  // Simulate delay while accessing db on local
+  const addDelay = async next => {
+    await setTimeout(() => next(), 2000)
+  }
+  app.use('/api', (req, res, next) => addDelay(next), api)
+} else {
+  app.use('/api', api)
+}
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' })
