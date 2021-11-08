@@ -4,16 +4,33 @@ const cors = require('cors')
 const morgan = require('morgan')
 require('dotenv').config()
 
+const rateLimiter = require('./middlewares/rateLimiter')
 const api = require('./routes/api')
 const connectDB = require('./connectDB')
 
 const app = express()
 const PORT = process.env.PORT || 5000
 
-app.use(cors())
-app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+
+// Middlewares
+
+// Logger
+app.use(morgan('dev'))
+
+// CORS
+const corsOptions = {
+  credentials: true,
+  origin: [
+    /wallet.zohaib.in$/,
+    /localhost/,
+  ],
+}
+app.use(cors(corsOptions))
+
+// Rate limiter
+app.use(rateLimiter)
 
 // Use Routes
 if (process.env.NODE_ENV === 'development') {
